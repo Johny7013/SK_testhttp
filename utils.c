@@ -50,3 +50,8 @@ void delete_following_endl(char** str) {
         (*str)[str_len - 1] = '\0';
     }
 }
+
+bool starts_with_prefix(const char* prefix, const char* str) {
+    size_t len_prefix = strlen(prefix), len_str = strlen(str);
+    return len_prefix > len_str ? false : memcmp(prefix, str, len_prefix) == 0;
+}

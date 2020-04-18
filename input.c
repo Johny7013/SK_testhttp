@@ -1,7 +1,3 @@
-//
-// Created by johny on 16.04.20.
-//
-
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -42,15 +38,26 @@ void parse_address_port(const char* input_addr_port, char** address, uint16_t* p
 }
 
 
-// remember to free memory allocated for tested_http_address
-void parse_tested_http_address(const char* input_tested_http_addr, char** tested_http_addr) {
-    *tested_http_addr = (char *) malloc(sizeof(char)*(strlen(input_tested_http_addr) + 1));
+// remember to free memory allocated for tested_http_addr
+void parse_tested_http_address(const char* input_tested_http_addr, char** host, char** resource, int* protocol_type) {
+    char http[8] = "http://", https[9] = "https://";
+    size_t http_len = 7, https_len = 8;
 
-    if (*tested_http_addr == NULL) {
-       syserr("Unable to allocate memory for http address");
+    *protocol_type = -1;
+
+    if (starts_with_prefix(http, input_tested_http_addr)) {
+        *protocol_type = 0;
+        bisect_string(input_tested_http_addr + http_len, host, resource, '/');
     }
 
-    strcpy(*tested_http_addr, input_tested_http_addr);
+    if (starts_with_prefix(https, input_tested_http_addr)) {
+        *protocol_type = 1;
+        bisect_string(input_tested_http_addr + https_len, host, resource, '/');
+    }
+
+    if (*protocol_type == -1) {
+        fatal("Wrong tested http address");
+    }
 }
 
 
@@ -83,6 +90,10 @@ void read_cookies(const char* file, cookie** cookies, size_t* num_of_cookies) {
     characters_read = getline(&buf, &max_line_len, f);
 
     while (characters_read != -1) {
+        if (*num_of_cookies >= 50) {
+            fatal("More cookies than accepted max value (max_value = 50)");
+        }
+
         bisect_string(cookie_buf, &cookie_key, &cookie_val, '=');
 
         delete_following_endl(&cookie_val);

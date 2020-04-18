@@ -15,13 +15,15 @@ int main(int argc, char* argv[]) {
     uint16_t port;
     cookie* cookies;
     size_t num_of_cookies;
-    char* tested_http_address;
+    char* host;
+    char* resource;
+    int protocol_type;
 
     parse_address_port(argv[1], &address, &port);
 
     read_cookies(argv[2], &cookies, &num_of_cookies);
 
-    parse_tested_http_address(argv[3], &tested_http_address);
+    parse_tested_http_address(argv[3], &host, &resource, &protocol_type);
 
     printf("Address: %s, Port: %d \n", address, port);
 
@@ -34,13 +36,14 @@ int main(int argc, char* argv[]) {
     }
 
     printf("\n");
-    printf("Tested_http_address: %s", tested_http_address);
+    printf("Tested_http_address Host: %s; Resource: %s; Protocol_type: %d", host, resource, protocol_type);
 
 
     // free
     free(address);
     free_cookies_array(cookies, num_of_cookies);
-    free(tested_http_address);
+    free(host);
+    free(resource);
 
 
     return 0;

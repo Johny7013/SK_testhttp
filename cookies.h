@@ -1,7 +1,3 @@
-//
-// Created by johny on 16.04.20.
-//
-
 #ifndef SK_MALE_ZADANIE1920_COOKIES_H
 #define SK_MALE_ZADANIE1920_COOKIES_H
 

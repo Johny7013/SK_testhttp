@@ -1,7 +1,3 @@
-//
-// Created by johny on 16.04.20.
-//
-
 #ifndef SK_MALE_ZADANIE1920_READ_INPUT_H
 #define SK_MALE_ZADANIE1920_READ_INPUT_H
 
@@ -13,7 +9,7 @@
 
 void parse_address_port(const char* input_addr_port, char** address, uint16_t* port);
 
-void parse_tested_http_address(const char* input_tested_http_addr, char** tested_http_addr);
+void parse_tested_http_address(const char* input_tested_http_addr, char** host, char** resource, int* protocol_type);
 
 void read_cookies(const char* file, cookie** cookies, size_t* num_of_cookies);
 
