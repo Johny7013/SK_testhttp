@@ -18,7 +18,7 @@ struct Cookie
     char* val;
 };
 // remember to free cookie
-cookie make_cookie(char* key, char* val);
+cookie make_cookie(const char* key, const char* val);
 
 void free_cookie(cookie cookie1);
 
@@ -27,6 +27,9 @@ void print_cookie(cookie cookie1);
 //cookie* init_cookies_array();
 
 void free_cookies_array(cookie* cookies, size_t num_of_cookies);
+
+//remeber to free str
+char* cookie_to_str(cookie cookie1);
 
 
 #endif //SK_MALE_ZADANIE1920_COOKIES_H
