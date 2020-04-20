@@ -1,4 +1,5 @@
 #include <memory.h>
+#include <stdbool.h>
 
 #include "http.h"
 #include "err.h"
@@ -75,12 +76,24 @@ char* http_request_to_str(http_request http_req) {
     }
 
     size_t str_len = method_len + res_len + ver_len + header_fields_len + NUM_OF_ADDITIONAL_CHARS_FIRST_LINE
-                     + NUM_OF_ADDITIONAL_CHARS_HEADER_LINE * http_req->num_of_header_fields + 1;
+                     + NUM_OF_ADDITIONAL_CHARS_HEADER_LINE * http_req->num_of_header_fields + 2; //for endl and \0
+
+    bool addSlash =  (res_len == 0 || http_req->resource[0] != '/');
+
+    if (addSlash) {
+        str_len++;
+    }
 
     char* str = malloc(sizeof(char) * str_len);
 
     strcpy(str, http_req->method);
     strcat(str, " ");
+
+    if (addSlash) {
+        strcat(str, "/");
+    }
+
+
     strcat(str, http_req->resource);
     strcat(str, " ");
     strcat(str, http_req->version);
@@ -93,6 +106,12 @@ char* http_request_to_str(http_request http_req) {
 
         free(header_field_str);
     }
+    strcat(str, "\n");
+//    strcat(str, "\n");
 
     return str;
+}
+
+void free_http_request(http_request http_req) {
+    free(http_req);
 }

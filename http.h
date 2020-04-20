@@ -5,6 +5,8 @@
 
 #define HTTP_VERSION "HTTP/1.1"
 
+#define HTTP_OK_RESPONSE "HTTP/1.1 200 OK"
+
 // request methods
 #define GET "GET"
 #define HEAD "HEAD"
@@ -57,5 +59,7 @@ http_request make_http_request(const char method[], char* resource, const char v
                                http_header_field* header_fields, size_t num_of_header_fields);
 
 char* http_request_to_str(http_request http_req);
+
+void free_http_request(http_request http_req);
 
 #endif //SK_MALE_ZADANIE1920_HTTP_REQUEST_H

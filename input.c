@@ -13,32 +13,34 @@
 
 // set address and port on values from input_addr_port string
 // remember to free memory allocated for address
-void parse_address_port(const char* input_addr_port, char** address, uint16_t* port) {
+void parse_address_port(const char* input_addr_port, char** address, char** port/*uint16_t* port*/) {
     char* end_ptr;
-    char* port_str;
+//    char* port_str;
 
-    if (bisect_string(input_addr_port, address, &port_str, ':') == 1) {
+    if (bisect_string(input_addr_port, address, port/*&port_str*/, ':') == 1) {
         fatal("Wrong syntax in input argument connect address. Correct syntax: address:port");
     }
 
-    errno = 0;
+//    errno = 0;
+//
+//    *port = (uint16_t)strtoul(port_str, &end_ptr, 10);
+//
+//    if (errno != 0 || port_str == end_ptr || *port > PORT_NUM_MAX) {
+//        fatal("Wrong port number");
+//    }
+//
+//    // if strtoul hasn't read whole port_str
+//    if (port_str + strlen(port_str) != end_ptr) {
+//        fatal("Wrong value in input argument connect address. Correct syntax: address:port");
+//    }
+//
+//    free(port_str);
 
-    *port = (uint16_t)strtoul(port_str, &end_ptr, 10);
-
-    if (errno != 0 || port_str == end_ptr || *port > PORT_NUM_MAX) {
-        fatal("Wrong port number");
-    }
-
-    // if strtoul hasn't read whole port_str
-    if (port_str + strlen(port_str) != end_ptr) {
-        fatal("Wrong value in input argument connect address. Correct syntax: address:port");
-    }
-
-    free(port_str);
 }
 
 
 // remember to free memory allocated for tested_http_addr
+// protocol type: 0 - http, 1 - https
 void parse_tested_http_address(const char* input_tested_http_addr, char** host, char** resource, int* protocol_type) {
     char http[8] = "http://", https[9] = "https://";
     size_t http_len = 7, https_len = 8;

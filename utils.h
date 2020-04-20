@@ -1,11 +1,8 @@
-//
-// Created by johny on 17.04.20.
-//
-
 #ifndef SK_MALE_ZADANIE1920_UTILS_H
 #define SK_MALE_ZADANIE1920_UTILS_H
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 // bisects origin into two strings (first and second).
 // first - a string on the left side of the first occurrence of delimiter in origin
@@ -17,5 +14,9 @@ int bisect_string(const char* origin, char** first, char** second, char delimite
 void delete_following_endl(char** str);
 
 bool starts_with_prefix(const char* prefix, const char* str);
+
+ssize_t read_line(char* source, char* dest, size_t max_line_len);
+
+bool is_empty_line(char* line);
 
 #endif //SK_MALE_ZADANIE1920_UTILS_H
