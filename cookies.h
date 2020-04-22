@@ -31,5 +31,6 @@ void free_cookies_array(cookie* cookies, size_t num_of_cookies);
 //remeber to free str
 char* cookie_to_str(cookie cookie1);
 
+cookie retrieve_cookie_from_set_cookie(char* set_cookie_line);
 
 #endif //SK_MALE_ZADANIE1920_COOKIES_H

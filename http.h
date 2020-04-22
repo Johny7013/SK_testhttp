@@ -18,10 +18,12 @@
 #define TRACE "TRACE"
 #define PATCH "PATCH"
 
+// according to RFC7230 min len is 8000
+// APACHE Servers limit is 8192
 #define MAX_HEADER_FIELD_LEN 8192
 
-#define NUM_OF_ADDITIONAL_CHARS_FIRST_LINE 3
-#define NUM_OF_ADDITIONAL_CHARS_HEADER_LINE 3
+#define NUM_OF_ADDITIONAL_CHARS_FIRST_LINE 4 // whitespaces, carriage return,  endl
+#define NUM_OF_ADDITIONAL_CHARS_HEADER_LINE 4
 
 struct HTTP_header_field;
 

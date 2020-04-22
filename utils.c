@@ -1,7 +1,3 @@
-//
-// Created by johny on 17.04.20.
-//
-
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -59,8 +55,30 @@ bool starts_with_prefix(const char* prefix, const char* str) {
     return len_prefix > len_str ? false : memcmp(prefix, str, len_prefix) == 0;
 }
 
-ssize_t read_line(char* source, char* dest, size_t max_line_len) {
+bool starts_with_prefix_case_insensitive(const char* prefix, const char* str) {
+    size_t shift = 0;
+    bool is_prefix = true;
+
+    while (*(prefix + shift) != '\0' && *(str + shift) != '\0') {
+        if (tolower(*(prefix + shift)) != tolower(*(str + shift))) {
+            is_prefix = false;
+            break;
+        }
+        shift++;
+    }
+
+    // if str is shorter than prefix
+    if (*(str + shift) == '\0' && *(prefix + shift) != '\0') {
+        is_prefix = false;
+    }
+
+    return is_prefix;
+}
+
+ssize_t read_line(const char* source, char* dest, size_t max_line_len) {
     char* pos = strchr(source, '\n');
+
+    //printf("Source: %s  Found endl: %s\n", source, pos);
 
     if (pos == NULL) {
         fprintf(stderr, "No line found"); // TODO delete ths line
@@ -77,10 +95,10 @@ ssize_t read_line(char* source, char* dest, size_t max_line_len) {
     memcpy(dest, source, pos - source + 1);
     dest[pos - source + 1] = '\0';
 
-    return (int)strlen(dest);
+    return (ssize_t)strlen(dest);
 }
 
-bool is_empty_line(char* line) {
+bool is_empty_line(const char* line) {
     bool res = true;
 
     while (*line != '\0') {
@@ -92,4 +110,30 @@ bool is_empty_line(char* line) {
     }
 
     return res;
+}
+
+char* pass_whitespaces(const char* str) {
+    char* passed_whitespaces_str = (char*)str;
+
+    while (isspace(*passed_whitespaces_str)) {
+        passed_whitespaces_str++;
+    }
+
+    return passed_whitespaces_str;
+}
+
+bool line_sets_cookie(const char* line) {
+    return starts_with_prefix_case_insensitive("Set-Cookie:", line);
+}
+
+bool line_sets_transfer_encoding_chunked(const char* line) {
+    char transfer_encoding[] = "Transfer-Encoding:", chunked[] = "chunked";
+
+    if (!starts_with_prefix_case_insensitive("Transfer-Encoding:", line)) {
+        return false;
+    }
+
+    char* encoding_type = pass_whitespaces((char *)line + strlen(transfer_encoding));
+
+    return starts_with_prefix_case_insensitive(chunked, encoding_type);
 }

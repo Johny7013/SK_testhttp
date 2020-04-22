@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "cookies.h"
+#include "utils.h"
 #include "err.h"
 
 cookie make_cookie(const char* key, const char* val) {
@@ -51,6 +52,44 @@ char* cookie_to_str(cookie cookie1) {
     strcpy(str + key_len + 1, cookie1->val);
 
     return str;
+}
+
+cookie retrieve_cookie_from_set_cookie(char* set_cookie_line) {
+    cookie made_cookie;
+    char* cookie_str = pass_whitespaces(set_cookie_line + strlen("Set-Cookie:"));
+    char* end_of_cookie_str;
+
+    const size_t possible_ends_size = 4;
+    char possible_ends_of_cookie_str[] = ";,\r "; // according to RFC2109 (in this case if I want only first cookie)
+
+
+    for (size_t i = 0; i < possible_ends_size; i++) {
+        end_of_cookie_str = strchr(cookie_str, possible_ends_of_cookie_str[i]);
+
+        if (end_of_cookie_str != NULL) {
+            const size_t cookie_from_line_len =  end_of_cookie_str - cookie_str;
+
+            char cookie_from_line[cookie_from_line_len + 1];
+
+            memcpy(cookie_from_line, cookie_str, cookie_from_line_len);
+            cookie_from_line[cookie_from_line_len] = '\0';
+
+            char* key;
+            char* val;
+
+            bisect_string(cookie_from_line, &key, &val, '=');
+
+            made_cookie = make_cookie(key, val);
+
+            free(key);
+            free(val);
+
+            break;
+        }
+    }
+
+
+    return made_cookie;
 }
 
 //cookie* init_cookies_array() {

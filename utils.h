@@ -15,8 +15,16 @@ void delete_following_endl(char** str);
 
 bool starts_with_prefix(const char* prefix, const char* str);
 
-ssize_t read_line(char* source, char* dest, size_t max_line_len);
+bool starts_with_prefix_case_insensitive(const char* prefix, const char* str);
 
-bool is_empty_line(char* line);
+ssize_t read_line(const char* source, char* dest, size_t max_line_len);
+
+bool is_empty_line(const char* line);
+
+char* pass_whitespaces(const char* str);
+
+bool line_sets_cookie(const char* line);
+
+bool line_sets_transfer_encoding_chunked(const char* line);
 
 #endif //SK_MALE_ZADANIE1920_UTILS_H

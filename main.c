@@ -15,6 +15,8 @@
 
 #define BUFFER_SIZE MAX_HEADER_FIELD_LEN + 1
 
+//#define BUFFER_SIZE 435 + 1
+
 int main(int argc, char* argv[]) {
 
     if (argc != 4) {
@@ -55,12 +57,16 @@ int main(int argc, char* argv[]) {
 
     // prepare http request
 
-    size_t num_of_http_header_fields = num_of_cookies + 2; //+2 because of host and close headers
+    size_t num_of_http_header_fields = num_of_cookies + 2; //+2 because of host and connection headers
 
     http_header_field* header_fields = malloc(sizeof(http_header_field) * num_of_http_header_fields);
 
     header_fields[0] = make_header_field("Host", host);
     header_fields[1] = make_header_field("Connection", "close");
+//    header_fields[1] = make_header_field("transfer-coding", "chunked");
+//    header_fields[1] = make_header_field("User-Agent", "curl/7.58.0");
+//    header_fields[2] = make_header_field("Accept", "*/*");
+    //header_fields[2] = make_header_field("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0");
 
     char* cookie_str;
 
@@ -81,9 +87,11 @@ int main(int argc, char* argv[]) {
     int i, err;
     char buffer[BUFFER_SIZE];
     char line[BUFFER_SIZE];
-    ssize_t len, rcv_len = 1, data_read = 0, read_by_lines, prev_read;
-    uint64_t content_len_field = 0, content_len_res = 0;
+    size_t chars_left_in_line = 0, still_to_read_in_chunk = 0;
+    ssize_t len, rcv_len = 1, read_by_lines, prev_read, read_in_line;
+    uint64_t content_len_field = 0, content_len_res = 0, chunk_len = 0;
     bool empty_line_encoutered = false, status_line_encountered = false, status_is_ok = false;
+    bool encoding_is_chunked = false, zero_chunk_encountered = false;
 
     // 'converting' host/port in string to struct addrinfo
     memset(&addr_hints, 0, sizeof(struct addrinfo));
@@ -107,7 +115,6 @@ int main(int argc, char* argv[]) {
     // connect socket to the server
     if (connect(sock, addr_result->ai_addr, addr_result->ai_addrlen) < 0) {
         syserr("connect");
-
     }
 
     freeaddrinfo(addr_result);
@@ -115,10 +122,10 @@ int main(int argc, char* argv[]) {
     char* http_req_str = http_request_to_str(http_req);
 
 //    len = strnlen(http_req_str, BUFFER_SIZE);
-    len = strnlen(http_req_str, BUFFER_SIZE);
-    if (len == BUFFER_SIZE) {
-        fprintf(stderr, "ignoring long parameter");
-    }
+    len = strlen(http_req_str);
+//    if (len == BUFFER_SIZE) {
+//        fprintf(stderr, "ignoring long parameter");
+//    }
     printf("writing to socket: %s\n", http_req_str);
     if (write(sock, http_req_str, (size_t)len) != len) {
         syserr("partial / failed write");
@@ -136,62 +143,148 @@ int main(int argc, char* argv[]) {
     while (rcv_len > 0) {
         memset(buffer, 0, sizeof(buffer));
 
-        rcv_len = read(sock, buffer, sizeof(buffer) - 1);
+        rcv_len = read(sock, buffer, BUFFER_SIZE - 1);
         if (rcv_len < 0) {
             syserr("read");
         }
 
-        data_read += rcv_len;
+//        data_read += rcv_len;
 
-        if(empty_line_encoutered) {
+        if(empty_line_encoutered && !encoding_is_chunked) {
             content_len_res += rcv_len;
         }
 
+        prev_read = 0;
+
         if (!empty_line_encoutered) {
-            read_by_lines = read_line(buffer, line, BUFFER_SIZE);
-            prev_read = 0;
+//            if (BUFFER_SIZE - chars_left_in_line == 0) {
+//                fatal("Header line is too long");
+//            }
+
+            read_by_lines = read_line(buffer, line + chars_left_in_line, BUFFER_SIZE - chars_left_in_line);
+
+            chars_left_in_line = 0;
 
             while (read_by_lines - prev_read > 0 && !empty_line_encoutered) {
 
-                if (!status_line_encountered && !starts_with_prefix(HTTP_OK_RESPONSE, line)) {
-                    printf("%s", line);
-                    status_is_ok = false;
-                }
-                else {
-                    status_is_ok = true;
+                printf("Line: %s", line);
+
+                if (!status_line_encountered) {
+                    if (!starts_with_prefix(HTTP_OK_RESPONSE, line)) {
+                        printf("%s", line);
+                        status_is_ok = false;
+                    }
+                    else {
+                        status_is_ok = true;
+                    }
+
+                    status_line_encountered = true;
                 }
 
-                status_line_encountered = true;
+                if (status_is_ok) {
+                    if (starts_with_prefix("Content-Length:", line)) {
+                        char* con_len;
+                        char* val;
+                        bisect_string(line, &con_len, &val, ':');
+                        content_len_field = strtoull(val, NULL, 10);
+                    }
 
-                if (status_is_ok && starts_with_prefix("Content-Length: ", line)) {
-                    char* con_len;
-                    char* val;
-                    bisect_string(line, &con_len, &val, ' ');
-                    content_len_field = strtoull(val, NULL, 10);
+                    if (line_sets_cookie(line)) {
+                        cookie retrieved_cookie = retrieve_cookie_from_set_cookie(line);
+                        print_cookie(retrieved_cookie);
+                        free_cookie(retrieved_cookie);
+                    }
+
+                    if (line_sets_transfer_encoding_chunked(line)) {
+                        encoding_is_chunked = true;
+                    }
                 }
 
-                if (status_is_ok && starts_with_prefix("Set Cookie: ", line)) {
-                    //TODO
-                }
+                prev_read = read_by_lines; // set how many characters you already read
 
                 if (is_empty_line(line)) {
                     empty_line_encoutered = true;
 
-                    content_len_res += rcv_len - read_by_lines;
+                    if (!encoding_is_chunked) {
+                        content_len_res += rcv_len - read_by_lines;
+                    }
                 }
                 else {
-                    prev_read = read_by_lines;
                     read_by_lines += read_line(buffer + prev_read, line, BUFFER_SIZE);
+                }
+            }
+
+            if (read_by_lines == prev_read) {
+                strcpy(line, buffer + prev_read);
+                chars_left_in_line = (size_t)rcv_len - prev_read;
+            }
+        }
+
+        //printf("Prev: %d\n", prev_read);
+
+        if (encoding_is_chunked && empty_line_encoutered && !zero_chunk_encountered) {
+
+            while (!zero_chunk_encountered && prev_read != rcv_len) {
+                //fprintf(stderr, "JOLO\n");
+
+                // when you need to read chunk size
+                if (still_to_read_in_chunk == 0) {
+//                    if (BUFFER_SIZE - chars_left_in_line == 0) {
+//                        fatal("Chunk-size line is too long");
+//                    }
+
+                    read_in_line = read_line(buffer + prev_read, line + chars_left_in_line, BUFFER_SIZE - chars_left_in_line);
+
+                    chars_left_in_line = 0;
+
+                    // when nothing was read put incomplete line into line
+                    if (read_in_line == 0) {
+                        strcpy(line, buffer + prev_read);
+                        chars_left_in_line = (size_t)rcv_len - prev_read;
+                    }
+                    else {
+                        prev_read += read_in_line;
+
+//                        printf("Still to str: %s\n", line);
+                        chunk_len = strtoull(line, NULL, 16);
+                        still_to_read_in_chunk = chunk_len + 2; // "\r\n"
+
+//                        printf("Still to read in chunk: %d\n", still_to_read_in_chunk);
+
+                        if (chunk_len == 0) {
+                            zero_chunk_encountered = true;
+                        }
+                    }
+                }
+                else {
+                    if (rcv_len - prev_read >= still_to_read_in_chunk) {
+                        content_len_res += still_to_read_in_chunk - 2;
+                        prev_read += still_to_read_in_chunk;
+                        still_to_read_in_chunk = 0;
+                    }
+                    else {
+                        content_len_res += rcv_len - prev_read;
+                        still_to_read_in_chunk -= rcv_len - prev_read;
+
+                        // when add whitespace from http syntax to content length
+                        if (still_to_read_in_chunk == 1) {
+                            content_len_res--;
+                        }
+
+                        prev_read = rcv_len;
+                    }
                 }
             }
         }
 
-        printf("read from socket: %zd bytes: %s\n", rcv_len, buffer);
+//        printf("read from socket: %zd bytes: %s\n", rcv_len, buffer);
     }
 
-    printf("http_len: %" PRIu64 ", my_len: %" PRIu64 "\n", content_len_field, content_len_res);
+//    printf("http_len: %" PRIu64 ", my_len: %" PRIu64 "\n", content_len_field, content_len_res);
 
-    printf("Dlugosc zasobu: %" PRIu64 "\n", content_len_res);
+    if (status_is_ok) {
+        printf("Dlugosc zasobu: %" PRIu64 "\n", content_len_res);
+    }
 
     // free
     free(address);
@@ -202,6 +295,8 @@ int main(int argc, char* argv[]) {
     free_header_field_array(header_fields, num_of_http_header_fields);
     free_http_request(http_req);
     free(http_req_str);
+
+    (void) close(sock);
 
 
     return 0;

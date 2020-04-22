@@ -7,7 +7,7 @@
 http_header_field make_header_field(const char* header, const char* val) {
     size_t header_len = strlen(header), val_len = strlen(val);
 
-    if (header_len + val_len + 2 > MAX_HEADER_FIELD_LEN) { //+2 because of ": " between header nad value in http request
+    if (header_len + val_len + NUM_OF_ADDITIONAL_CHARS_HEADER_LINE > MAX_HEADER_FIELD_LEN) {
         fatal("Header field is too lonng. Max length %d", MAX_HEADER_FIELD_LEN);
     }
 
@@ -49,7 +49,7 @@ char* header_field_to_str(http_header_field header_field) {
     strcpy(str, header_field->header);
     strcat(str, ": ");
     strcat(str, header_field->val);
-    strcat(str, "\n");
+    strcat(str, "\r\n");
 
     return str;
 }
@@ -76,7 +76,7 @@ char* http_request_to_str(http_request http_req) {
     }
 
     size_t str_len = method_len + res_len + ver_len + header_fields_len + NUM_OF_ADDITIONAL_CHARS_FIRST_LINE
-                     + NUM_OF_ADDITIONAL_CHARS_HEADER_LINE * http_req->num_of_header_fields + 2; //for endl and \0
+                     + NUM_OF_ADDITIONAL_CHARS_HEADER_LINE * http_req->num_of_header_fields + 3; //for CRLF and \0
 
     bool addSlash =  (res_len == 0 || http_req->resource[0] != '/');
 
@@ -93,11 +93,10 @@ char* http_request_to_str(http_request http_req) {
         strcat(str, "/");
     }
 
-
     strcat(str, http_req->resource);
     strcat(str, " ");
     strcat(str, http_req->version);
-    strcat(str, "\n");
+    strcat(str, "\r\n");
 
     for (size_t i = 0; i < http_req->num_of_header_fields; i++) {
         char* header_field_str = header_field_to_str(http_req->header_fields[i]);
@@ -106,8 +105,7 @@ char* http_request_to_str(http_request http_req) {
 
         free(header_field_str);
     }
-    strcat(str, "\n");
-//    strcat(str, "\n");
+    strcat(str, "\r\n");
 
     return str;
 }
