@@ -14,6 +14,7 @@ http_header_field make_header_field(const char* header, const char* val) {
 
     if (header_len + val_len + NUM_OF_ADDITIONAL_CHARS_HEADER_LINE > MAX_HEADER_FIELD_LEN) {
         fatal("Header field is too long. Max length %d", MAX_HEADER_FIELD_LEN);
+        return NULL;
     }
 
     http_header_field created_header_field = (http_header_field) malloc(sizeof(struct HTTP_header_field));
@@ -33,6 +34,56 @@ void free_header_field(http_header_field header_field) {
     free(header_field->header);
     free(header_field->val);
     free(header_field);
+}
+
+http_header_field* generate_header_fields(cookie* cookies, size_t num_of_cookies, const char* host,
+                                          size_t* num_of_http_header_fields) {
+    *num_of_http_header_fields = num_of_cookies + 2; //+2 because of host and connection headers
+
+    http_header_field* header_fields = malloc(sizeof(http_header_field) * (*num_of_http_header_fields));
+
+    if (header_fields == NULL) {
+        syserr("Unable to allocate memory");
+        goto error_exit;
+    }
+    else {
+        for (size_t i = 0; i < *num_of_http_header_fields; i++) {
+            header_fields[i] = NULL;
+        }
+    }
+
+    header_fields[0] = make_header_field("Host", host);
+    header_fields[1] = make_header_field("Connection", "close");
+
+    char* cookie_str;
+
+    for (size_t i = 2; i < *num_of_http_header_fields; i++) {
+        cookie_str = cookie_to_str(cookies[i - 2]);
+
+        if (cookie_str == NULL) {
+            fatal("Unable to allocate memory");
+            goto clean_up;
+        }
+
+        header_fields[i] = make_header_field("Cookie", cookie_str);
+        free(cookie_str);
+    }
+
+    // check if any header_field wasn't generated properly
+    for (size_t i = 0; i < *num_of_http_header_fields; i++) {
+        if (header_fields[i] == NULL) {
+            fatal("Unable to allocate memory");
+            goto clean_up;
+        }
+    }
+
+    return header_fields;
+
+clean_up:
+    free_header_field_array(header_fields, *num_of_http_header_fields);
+
+error_exit:
+    return NULL;
 }
 
 void free_header_field_array(http_header_field* header_fields, size_t num_of_fields) {
@@ -122,6 +173,7 @@ void free_http_request(http_request http_req) {
 bool is_status_ok(char* status_line) {
     size_t ok_status_len = strlen(HTTP_OK_STATUS);
     char* ok_status_line_prefix;
+    bool res;
 
     if (starts_with_prefix(HTTP_VERSION10, status_line)) {
         ok_status_line_prefix = compose_strings(HTTP_VERSION10, HTTP_OK_STATUS, " ");
@@ -134,7 +186,11 @@ bool is_status_ok(char* status_line) {
         return false;
     }
 
-    return starts_with_prefix(ok_status_line_prefix, status_line);
+    res = starts_with_prefix(ok_status_line_prefix, status_line);
+
+    free(ok_status_line_prefix);
+
+    return res;
 }
 
 int send_http_request(int sock, http_request http_req) {

@@ -8,8 +8,19 @@
 
 cookie make_cookie(const char* key, const char* val) {
     cookie created_cookie = (cookie) malloc(sizeof(struct Cookie));
+
     char* cookie_key = (char *) malloc(sizeof(char) * (strlen(key) + 1));
     char* cookie_val = (char *) malloc(sizeof(char) * (strlen(val) + 1));
+
+    if (created_cookie == NULL || cookie_key == NULL || cookie_val == NULL) {
+        syserr("Unable to allocate memory");
+
+        free(created_cookie);
+        free(cookie_key);
+        free(cookie_val);
+
+        return NULL;
+    }
 
     strcpy(cookie_key, key);
     strcpy(cookie_val, val);
@@ -41,7 +52,7 @@ char* cookie_to_str(cookie cookie1) {
     size_t key_len = strlen(cookie1->key), val_len = strlen(cookie1->val);
     size_t str_len = key_len + val_len + 2;
 
-    char* str = (char *) malloc(sizeof(char) * str_len);
+    char* str = (char*) malloc(sizeof(char) * str_len);
 
     if (str == NULL) {
         syserr("Unable to allocate memory for cookie string");

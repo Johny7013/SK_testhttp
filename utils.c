@@ -13,7 +13,7 @@ int bisect_string(const char* origin, char** first, char** second, char delimite
     delimiter_position = strchr(origin, (int)delimiter);
 
     if (delimiter_position == NULL) {
-        return 1;
+        return -1;
     }
 
     size_t origin_len = strlen(origin);
@@ -24,6 +24,7 @@ int bisect_string(const char* origin, char** first, char** second, char delimite
 
     if (*first == NULL) {
         syserr("Unable to allocate memory for first in bisect_string");
+        return -2;
     }
 
     *second = (char*) malloc(sizeof(char) * (second_len + 1));
@@ -31,6 +32,7 @@ int bisect_string(const char* origin, char** first, char** second, char delimite
     if (*second == NULL) {
         free(first);
         syserr("Unable to allocate memory for second in bisect_string");
+        return -2;
     }
 
     memcpy(*first, origin, first_len);

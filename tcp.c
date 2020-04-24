@@ -34,12 +34,14 @@ int connect_with_server(char* address, char* port) {
     sock = socket(addr_result->ai_family, addr_result->ai_socktype, addr_result->ai_protocol);
     if (sock < 0) {
         syserr("socket");
+        //freeaddrinfo
         return -1;
     }
 
     // connect socket to the server
     if (connect(sock, addr_result->ai_addr, addr_result->ai_addrlen) < 0) {
         syserr("connect");
+        //freeaddrinfo
         return -1;
     }
 

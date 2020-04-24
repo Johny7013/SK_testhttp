@@ -41,6 +41,9 @@ struct HTTP_header_field {
 
 http_header_field make_header_field(const char* header, const char* val);
 
+http_header_field* generate_header_fields(cookie* cookies, size_t num_of_cookies, const char* host,
+                                          size_t* num_of_http_header_fields);
+
 void free_header_field(http_header_field header_field);
 
 void free_header_field_array(http_header_field* header_fields, size_t num_of_fields);

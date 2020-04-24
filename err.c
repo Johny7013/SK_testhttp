@@ -15,7 +15,6 @@ void syserr(const char *fmt, ...)
   vfprintf(stderr, fmt, fmt_args);
   va_end(fmt_args);
   fprintf(stderr, " (%d; %s)\n", errno1, strerror(errno1));
-  exit(EXIT_FAILURE);
 }
 
 void fatal(const char *fmt, ...)
@@ -27,5 +26,4 @@ void fatal(const char *fmt, ...)
   vfprintf(stderr, fmt, fmt_args);
   va_end(fmt_args);
   fprintf(stderr, "\n");
-  exit(EXIT_FAILURE);
 }

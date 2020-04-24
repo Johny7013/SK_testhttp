@@ -6,7 +6,7 @@
 #define MAX_COOKIES_NUM 50
 #define MAX_COOKIE_LEN 4096
 
-#include <stdlib.h>
+#include <stddef.h>
 
 struct Cookie;
 
