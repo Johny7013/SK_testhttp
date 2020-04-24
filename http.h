@@ -1,11 +1,16 @@
 #ifndef SK_MALE_ZADANIE1920_HTTP_REQUEST_H
 #define SK_MALE_ZADANIE1920_HTTP_REQUEST_H
 
+#include <stdbool.h>
+#include <inttypes.h>
+
 #include "cookies.h"
 
-#define HTTP_VERSION "HTTP/1.1"
+// known HTTP versions
+#define HTTP_VERSION10 "HTTP/1.0"
+#define HTTP_VERSION11 "HTTP/1.1"
 
-#define HTTP_OK_RESPONSE "HTTP/1.1 200 OK"
+#define HTTP_OK_STATUS "200 OK"
 
 // request methods
 #define GET "GET"
@@ -63,5 +68,11 @@ http_request make_http_request(const char method[], char* resource, const char v
 char* http_request_to_str(http_request http_req);
 
 void free_http_request(http_request http_req);
+
+bool is_status_ok(char* status_line);
+
+int send_http_request(int sock, http_request http_req);
+
+int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len);
 
 #endif //SK_MALE_ZADANIE1920_HTTP_REQUEST_H

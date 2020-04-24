@@ -13,12 +13,13 @@
 
 // set address and port on values from input_addr_port string
 // remember to free memory allocated for address
-void parse_address_port(const char* input_addr_port, char** address, char** port/*uint16_t* port*/) {
+int parse_address_port(const char* input_addr_port, char** address, char** port/*uint16_t* port*/) {
     char* end_ptr;
 //    char* port_str;
 
-    if (bisect_string(input_addr_port, address, port/*&port_str*/, ':') == 1) {
+    if (bisect_string(input_addr_port, address, port/*&port_str*/, ':') == 1 || strlen(*address) == 0 || strlen(*port) == 0) {
         fatal("Wrong syntax in input argument connect address. Correct syntax: address:port");
+        return 1;
     }
 
 //    errno = 0;
@@ -39,11 +40,12 @@ void parse_address_port(const char* input_addr_port, char** address, char** port
 }
 
 
-// remember to free memory allocated for tested_http_addr
+// remember to free memory allocated for host and resource
 // protocol type: 0 - http, 1 - https
 void parse_tested_http_address(const char* input_tested_http_addr, char** host, char** resource, int* protocol_type) {
-    char http[8] = "http://", https[9] = "https://";
-    size_t http_len = 7, https_len = 8;
+    char http[8] = "http://", https[9] = "https://", http_port[4] = ":80", https_port[5] = ":443";
+    size_t http_len = strlen(http), https_len = strlen(https);
+    size_t http_port_len = strlen(http_port), https_port_len = strlen(https_port);
 
     *protocol_type = -1;
 
@@ -60,6 +62,39 @@ void parse_tested_http_address(const char* input_tested_http_addr, char** host, 
     if (*protocol_type == -1) {
         fatal("Wrong tested http address");
     }
+
+    char* host_addr = NULL;
+    char* host_port = NULL;
+
+    // when port isn't defined in host name
+    if (bisect_string(*host, &host_addr, &host_port, ':') == 1 || strlen(host_port) == 0) {
+        size_t host_len = strlen(*host);
+
+        if (*protocol_type == 0) {
+            *host = realloc(*host, host_len + http_port_len);
+
+            if (*host == NULL) {
+                syserr("Unable to alocate memory");
+            }
+
+            strcat(*host, http_port);
+        }
+
+        if (*protocol_type == 1) {
+            *host = realloc(*host, host_len + https_port_len);
+
+            if (*host == NULL) {
+                syserr("Unable to alocate memory");
+            }
+
+            strcat(*host, https_port);
+        }
+    }
+
+    if (host_addr && host_port) {
+        free(host_addr);
+        free(host_port);
+    }
 }
 
 
@@ -75,7 +110,7 @@ void read_cookies(const char* file, cookie** cookies, size_t* num_of_cookies) {
     }
 
     size_t max_line_len = MAX_COOKIE_LEN + 1; // because of '\n'
-    ssize_t  characters_read;
+    ssize_t characters_read;
 
     char cookie_buf[max_line_len + 1]; // because of '\0'
     char* buf = cookie_buf;

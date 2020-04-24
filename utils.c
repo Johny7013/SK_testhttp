@@ -13,7 +13,7 @@ int bisect_string(const char* origin, char** first, char** second, char delimite
     delimiter_position = strchr(origin, (int)delimiter);
 
     if (delimiter_position == NULL) {
-        return -1;
+        return 1;
     }
 
     size_t origin_len = strlen(origin);
@@ -136,4 +136,20 @@ bool line_sets_transfer_encoding_chunked(const char* line) {
     char* encoding_type = pass_whitespaces((char *)line + strlen(transfer_encoding));
 
     return starts_with_prefix_case_insensitive(chunked, encoding_type);
+}
+
+char* compose_strings(char* str1, char* str2, char* delimiter) {
+    size_t str1_len = strlen(str1), str2_len = strlen(str2), delimiter_len = strlen(delimiter);
+    char* composed_string = (char*) malloc(sizeof(char) * (str1_len + str2_len + delimiter_len + 1));
+
+    strcpy(composed_string, str1);
+    strcat(composed_string, delimiter);
+    strcat(composed_string, str2);
+
+//    memcpy(composed_string, str1, str1_len);
+//    memcpy(composed_string + str1_len, delimiter, delimiter_len);
+//    memcpy(composed_string + str1_len + delimiter_len, str2, str2_len);
+//    composed_string[str1_len + delimiter_len + str2_len] = '\0';
+
+    return composed_string;
 }

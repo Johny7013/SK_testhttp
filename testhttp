@@ -7,7 +7,7 @@
 
 # script to run testhttp_raw via stunnel
 # this script assumes that there is testhttp_raw executable file in the same folder
-# as the script (i.e. accessible in this way: ./testhttp_raw)
+# as the script
 
 HTTP_PREF="http://"
 HTTPS_PREF="https://"

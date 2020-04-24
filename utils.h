@@ -27,4 +27,6 @@ bool line_sets_cookie(const char* line);
 
 bool line_sets_transfer_encoding_chunked(const char* line);
 
+char* compose_strings(char* str1, char* str2, char* delimiter);
+
 #endif //SK_MALE_ZADANIE1920_UTILS_H
