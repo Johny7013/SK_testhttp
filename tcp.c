@@ -7,7 +7,9 @@
 #include "err.h"
 #include "tcp.h"
 
-// returns sock number, if error then -1
+// connects to server with address:port via TCP
+//
+// returns sock number - on success, -1 - on failure
 int connect_with_server(char* address, char* port) {
     int sock;
     struct addrinfo addr_hints;
@@ -34,14 +36,14 @@ int connect_with_server(char* address, char* port) {
     sock = socket(addr_result->ai_family, addr_result->ai_socktype, addr_result->ai_protocol);
     if (sock < 0) {
         syserr("socket");
-        //freeaddrinfo
+        freeaddrinfo(addr_result);
         return -1;
     }
 
     // connect socket to the server
     if (connect(sock, addr_result->ai_addr, addr_result->ai_addrlen) < 0) {
         syserr("connect");
-        //freeaddrinfo
+        freeaddrinfo(addr_result);
         return -1;
     }
 
@@ -50,6 +52,9 @@ int connect_with_server(char* address, char* port) {
     return sock;
 }
 
+// writes msg to socket sock with write function
+//
+// returns 0 - on success, -1 - on failure
 int write_to_socket(int sock, char* msg) {
     size_t len = strlen(msg);
 //    printf("writing to socket: %s\n", http_req_str);
@@ -58,12 +63,19 @@ int write_to_socket(int sock, char* msg) {
         return -1;
     }
 
+    return 0;
 }
 
+// reads socket sock into buffer with read function
+// reads up to max_data_to_read into buffer ends data read with '\0' char,
+// which is also put into buffer.
+// Size of buffer needs to be big enough to store max_data_to_read + 1 bytes
+//
+// returns number of bytes read form socket - on success, -1 - on failure
 ssize_t read_from_socket(int sock, char* buffer, size_t max_data_to_read) {
     ssize_t rcv_len = read(sock, buffer, max_data_to_read);
     if (rcv_len < 0) {
-        syserr("read");
+        syserr("Failed trying to read for socket");
         return -1;
     }
 

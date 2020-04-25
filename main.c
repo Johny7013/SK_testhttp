@@ -65,45 +65,6 @@ int main(int argc, char* argv[]) {
 
     // prepare http request
 
-//    size_t num_of_http_header_fields = num_of_cookies + 2; //+2 because of host and connection headers
-//
-//    http_header_field* header_fields = malloc(sizeof(http_header_field) * num_of_http_header_fields);
-//
-//    if (header_fields == NULL) {
-//        syserr("Unable to allocate memory");
-//        goto clean_before_header_fields;
-//    }
-//    else {
-//        for (size_t i = 0; i < num_of_http_header_fields; i++) {
-//            header_fields[i] = NULL;
-//        }
-//    }
-//
-//    header_fields[0] = make_header_field("Host", host);
-//    header_fields[1] = make_header_field("Connection", "close");
-//
-//    char* cookie_str;
-//
-//    for (size_t i = 2; i < num_of_http_header_fields; i++) {
-//        cookie_str = cookie_to_str(cookies[i - 2]);
-//
-//        if (cookie_str == NULL) {
-//            fatal("Unable to allocate memory");
-//            goto clean_before_http_request;
-//        }
-//
-//        header_fields[i] = make_header_field("Cookie", cookie_str);
-//        free(cookie_str);
-//    }
-//
-//
-//    for (size_t i = 0; i < num_of_http_header_fields; i++) {
-//        if (header_fields[i] == NULL) {
-//            fatal("Unable to allocate memory");
-//            goto clean_before_http_request;
-//        }
-//    }
-
     size_t num_of_http_header_fields;
 
     http_header_field* header_fields = generate_header_fields(cookies, num_of_cookies, host, &num_of_http_header_fields);
@@ -120,7 +81,7 @@ int main(int argc, char* argv[]) {
         goto clean_before_http_request;
     }
 
-    //tcp stuff
+    //tcp
 
     int sock;
 
@@ -142,7 +103,7 @@ int main(int argc, char* argv[]) {
         printf("Dlugosc zasobu: %" PRIu64 "\n", content_len_result);
     }
 
-    // free normal
+    // free standard
     (void) close(sock);
     free_http_request(http_req);
     free_header_field_array(header_fields, num_of_http_header_fields);

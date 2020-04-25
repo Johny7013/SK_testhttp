@@ -7,4 +7,7 @@ extern void syserr(const char *fmt, ...);
 // prints info about an error during program execution
 extern void fatal(const char *fmt, ...);
 
+// prints info that system is unable to allocate memory
+extern void memerr_alloc();
+
 #endif

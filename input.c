@@ -74,7 +74,7 @@ int parse_tested_http_address(const char* input_tested_http_addr, char** host, c
             *host = realloc(*host, host_len + http_port_len + 1);
 
             if (*host == NULL) {
-                syserr("Unable to allocate memory");
+                memerr_alloc();
                 return -1;
             }
 
@@ -85,7 +85,7 @@ int parse_tested_http_address(const char* input_tested_http_addr, char** host, c
             *host = realloc(*host, host_len + https_port_len + 1);
 
             if (*host == NULL) {
-                syserr("Unable to allocate memory");
+                memerr_alloc();
                 return -1;
             }
 
@@ -152,7 +152,7 @@ int read_cookies(const char* file, cookie** cookies, size_t* num_of_cookies) {
         cookie made_cookie = make_cookie(cookie_key, cookie_val);
 
         if (made_cookie == NULL) {
-            fatal("Unable to make cookie struct");
+            fatal("Unable to make cookie :(");
             goto error_exit;
         }
 
