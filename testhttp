@@ -7,7 +7,7 @@
 
 # script to run testhttp_raw via stunnel
 # this script assumes that there is testhttp_raw executable file in the same folder
-# as the script
+# as the script (i.e. accessible in this way: ./testhttp_raw)
 
 HTTP_PREF="http://"
 HTTPS_PREF="https://"
@@ -47,12 +47,14 @@ trap clean_up SIGTERM SIGINT SIGQUIT SIGHUP
 
 if [[ $2 = $HTTP_PREF* ]]; then
 	ADDRESS=$(awk -F/ '{print $3}' <<<$2)
-	$SCRIPT_LOCATION/testhttp_raw "$ADDRESS:80" $1 $2
+	if [[ $ADDRESS = *":"[0-9]* ]]; then
+		$SCRIPT_LOCATION/testhttp_raw $ADDRESS $1 $2
+	else
+		$SCRIPT_LOCATION/testhttp_raw "$ADDRESS:80" $1 $2
+	fi
 elif [[ $2 = $HTTPS_PREF* ]]; then
 	TEMP=$(mktemp -p $SCRIPT_LOCATION stunnel.confXXX)
 	TUNNEL_PID_FILE_NAME=$(pwd)"/$SCRIPT_LOCATION/stunnel.pid"
-
-	echo $SCRIPT_LOCATION
 
 	LOCAL_ADDRESS_PORT="127.0.0.1:10037"
 

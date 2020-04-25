@@ -11,6 +11,8 @@
 #include "err.h"
 #include "utils.h"
 
+#define MAX_PORT_NUM 65535
+
 // sets address and port on values from input_addr_port string
 // allocates memory for address and port, which need to be freed (by free function)
 //
