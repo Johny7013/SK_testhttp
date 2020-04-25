@@ -1,3 +1,5 @@
+// Author: Jan Klinkosz, id number: 394 342
+
 #ifndef SK_MALE_ZADANIE1920_HTTP_REQUEST_H
 #define SK_MALE_ZADANIE1920_HTTP_REQUEST_H
 

@@ -1,3 +1,6 @@
+// borrowed from University of Warsaw's Computer Networks course
+// adapted by: Jan Klinkosz, id number: 394 342
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

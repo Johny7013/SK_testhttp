@@ -1,3 +1,5 @@
+// Author: Jan Klinkosz, id number: 394 342
+
 #include <memory.h>
 #include <stdbool.h>
 #include <inttypes.h>

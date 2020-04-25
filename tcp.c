@@ -1,3 +1,5 @@
+// Author: Jan Klinkosz, id number: 394 342
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>

@@ -1,3 +1,5 @@
+// Author: Jan Klinkosz, id number: 394 342
+
 #include <stdlib.h>
 #include <memory.h>
 #include <stdio.h>

@@ -1,3 +1,5 @@
+// Author: Jan Klinkosz, id number: 394 342
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -8,8 +10,6 @@
 #include "cookies.h"
 #include "err.h"
 #include "utils.h"
-
-// TODO change functions to return int, where negative values represent certain errors and then functions with printing communicates accoring to error number
 
 // sets address and port on values from input_addr_port string
 // allocates memory for address and port, which need to be freed (by free function)

@@ -1,3 +1,5 @@
+// Author: Jan Klinkosz, id number: 394 342
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

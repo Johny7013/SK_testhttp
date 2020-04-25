@@ -1,3 +1,5 @@
+// borrowed from University of Warsaw's Computer Networks course
+// adapted by: Jan Klinkosz, id number: 394 342
 #ifndef _ERR_
 #define _ERR_
 
