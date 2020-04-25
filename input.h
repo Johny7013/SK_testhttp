@@ -10,7 +10,7 @@
 // sets address and port on values from input_addr_port string
 // allocates memory for address and port, which need to be freed (by free function)
 //
-// returns 0 - on success, -1 - on failure
+// returns 0 - on success, -1 - on failure (for example wrong port number)
 int parse_address_port(const char* input_addr_port, char** address, char** port);
 
 // sets host and resource on values from input_tested_http_address string

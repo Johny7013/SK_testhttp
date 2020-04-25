@@ -16,7 +16,7 @@
 // sets address and port on values from input_addr_port string
 // allocates memory for address and port, which need to be freed (by free function)
 //
-// returns 0 - on success, -1 - on failure
+// returns 0 - on success, -1 - on failure (for example wrong port number)
 int parse_address_port(const char* input_addr_port, char** address, char** port) {
 
     int bisect_res = bisect_string(input_addr_port, address, port, ':');
@@ -27,6 +27,22 @@ int parse_address_port(const char* input_addr_port, char** address, char** port)
     }
 
     if (bisect_res == -2) {
+        return -1;
+    }
+
+    char* end_ptr;
+    errno = 0;
+
+    uint16_t port_num = (uint16_t)strtoul(*port, &end_ptr, 10);
+
+    if (errno != 0 || *port == end_ptr || port_num > MAX_PORT_NUM) {
+        fatal("Wrong port number");
+        return -1;
+    }
+
+    // if strtoul hasn't read whole port_str
+    if (*port + strlen(*port) != end_ptr) {
+        fatal("Wrong value in input argument connect address. Correct syntax: address:port");
         return -1;
     }
 
