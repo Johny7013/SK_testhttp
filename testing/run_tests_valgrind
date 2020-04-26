@@ -4,7 +4,7 @@ TEST_NUMBER=0
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt http://www.mimuw.edu.pl/ \n"
-./testhttp cookies.txt http://www.mimuw.edu.pl/
+./testhttp_valgrind cookies.txt http://www.mimuw.edu.pl/
 
 ((TEST_NUMBER++))
 
@@ -12,15 +12,15 @@ echo -e "\n\n\n";
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://sportowefakty.wp.pl/ \n"
-./testhttp cookies.txt https://sportowefakty.wp.pl/
+./testhttp_valgrind cookies.txt https://sportowefakty.wp.pl/
 
 ((TEST_NUMBER++))
 
 echo -e "\n\n\n";
 
 echo -e "Test: $TEST_NUMBER\n"
-echo -e "Arguments: " "cookies.txt https://sportowefakty.wp.pl:80/ \n"
-./testhttp cookies.txt https://sportowefakty.wp.pl:80/
+echo -e "Arguments: " "cookies.txt https://sportowefakty.wp.pl/ \n"
+./testhttp_valgrind cookies.txt https://sportowefakty.wp.pl/
 
 ((TEST_NUMBER++))
 
@@ -28,7 +28,7 @@ echo -e "\n\n\n";
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://wallpapershome.com/images/pages/pic_h/21486.jpg \n"
-./testhttp cookies.txt https://wallpapershome.com/images/pages/pic_h/21486.jpg
+./testhttp_valgrind cookies.txt https://wallpapershome.com/images/pages/pic_h/21486.jpg
 
 ((TEST_NUMBER++))
 
@@ -36,7 +36,7 @@ echo -e "\n\n\n";
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt http://wallpapershome.com:80/images/pages/pic_h/21486.jpg \n"
-./testhttp cookies.txt http://wallpapershome.com:80/images/pages/pic_h/21486.jpg
+./testhttp_valgrind cookies.txt http://wallpapershome.com:80/images/pages/pic_h/21486.jpg
 
 ((TEST_NUMBER++))
 
@@ -44,7 +44,7 @@ echo -e "\n\n\n";
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://www.mimuw.edu.pl/ \n"
-./testhttp cookies.txt https://www.mimuw.edu.pl/
+./testhttp_valgrind cookies.txt https://www.mimuw.edu.pl/
 
 ((TEST_NUMBER++))
 
@@ -52,7 +52,7 @@ echo -e "\n\n\n";
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://www.mimuw.edu.pl:443/ \n"
-./testhttp cookies.txt https://www.mimuw.edu.pl/
+./testhttp_valgrind cookies.txt https://www.mimuw.edu.pl/
 
 ((TEST_NUMBER++))
 
@@ -60,4 +60,4 @@ echo -e "\n\n\n";
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx \n"
-./testhttp cookies.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx
+./testhttp_valgrind cookies.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx

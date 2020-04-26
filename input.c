@@ -84,8 +84,14 @@ int parse_tested_http_address(const char* input_tested_http_addr, char** host, c
     char* host_addr = NULL;
     char* host_port = NULL;
 
+    int bisect_str_code = bisect_string(*host, &host_addr, &host_port, ':');
+
+    if (bisect_str_code == -2) {
+        return -1;
+    }
+
     // when port isn't defined in host name set port name according to protocol used
-    if (bisect_string(*host, &host_addr, &host_port, ':') == -1 || strlen(host_port) == 0) {
+    if (bisect_str_code == -1 || strlen(host_port) == 0) {
         size_t host_len = strlen(*host);
 
         if (*protocol_type == 0) {
@@ -111,7 +117,7 @@ int parse_tested_http_address(const char* input_tested_http_addr, char** host, c
         }
     }
 
-    if (host_addr && host_port) {
+    if (bisect_str_code == 0) {
         free(host_addr);
         free(host_port);
     }
@@ -170,15 +176,15 @@ int read_cookies(const char* file, cookie** cookies, size_t* num_of_cookies) {
 
         cookie made_cookie = make_cookie(cookie_key, cookie_val);
 
+        free(cookie_key);
+        free(cookie_val);
+
         if (made_cookie == NULL) {
             fatal("Unable to make cookie :(");
             goto error_exit;
         }
 
         (*cookies)[(int)(*num_of_cookies)] = made_cookie;
-
-        free(cookie_key);
-        free(cookie_val);
 
         (*num_of_cookies)++;
 
