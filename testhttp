@@ -77,6 +77,6 @@ elif [[ $2 = $HTTPS_PREF* ]]; then
 
 	clean_up 0
 else
-	echo "$2 doesn't start with http:// or https://"
+	echo "ERROR: $2 doesn't start with http:// or https://" >&2
 	exit 1
 fi
