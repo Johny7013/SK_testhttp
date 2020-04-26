@@ -1,3 +1,4 @@
+// 27.04.2020 Final v1.1
 // Author: Jan Klinkosz, id number: 394 342
 
 #include <stdio.h>
