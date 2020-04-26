@@ -41,12 +41,12 @@ int main(int argc, char* argv[]) {
     }
 
     if (read_cookies(argv[2], &cookies, &num_of_cookies) < 0) {
-        fatal("Failed trying to read cookies form file");
+        fatal("Failed trying to read cookies from file");
         goto clean_before_cookies_array;
     }
 
     if (parse_tested_http_address(argv[3], &host, &resource, &protocol_type) < 0) {
-        fatal("Failed trying to parse tested_http_address form input");
+        fatal("Failed trying to parse tested_http_address from input");
         goto clean_before_tested_http_address;
     }
 
@@ -101,8 +101,13 @@ int main(int argc, char* argv[]) {
 
     uint64_t content_len_result;
 
-    if (handle_http_response(sock, BUFFER_SIZE, &content_len_result) == 0) {
+    int handling_response_res = handle_http_response(sock, BUFFER_SIZE, &content_len_result);
+
+    if (handling_response_res == 0) {
         printf("Dlugosc zasobu: %" PRIu64 "\n", content_len_result);
+    }
+    else if (handling_response_res < 0) {
+        fatal("Failed trying to handle http response from server");
     }
 
     // free standard

@@ -351,7 +351,7 @@ int send_http_request(int sock, http_request http_req) {
 // if server responded with other status than 200 then this function prints on standard output
 // status line of response
 //
-// returns 0 - on success, -1 - on failure
+// returns 0 - on success, -1 - on failure, 1 - when server got http response with status different than 200
 int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans) {
     char buffer[buffer_size];
     char line[buffer_size];
@@ -414,14 +414,15 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
                     status_line_encountered = true;
                 }
 
+                //TODO remove
+                if (starts_with_prefix("Content-Length:", line)) {
+                    char* con_len;
+                    char* val;
+                    bisect_string(line, &con_len, &val, ':');
+                    content_len_field = strtoull(val, NULL, 10);
+                }
+
                 if (status_is_ok) {
-                    //TODO remove
-                    if (starts_with_prefix("Content-Length:", line)) {
-                        char* con_len;
-                        char* val;
-                        bisect_string(line, &con_len, &val, ':');
-                        content_len_field = strtoull(val, NULL, 10);
-                    }
 
                     if (line_sets_cookie(line)) {
                         cookie retrieved_cookie = retrieve_cookie_from_set_cookie(line);
@@ -533,6 +534,10 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
         }
 
 //        printf("read from socket: %zd bytes: %s\n", rcv_len, buffer);
+    }
+
+    if (!status_is_ok) {
+        return 1;
     }
 
     if (encoding_is_chunked && !zero_chunk_encountered) {

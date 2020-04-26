@@ -162,6 +162,7 @@ int read_cookies(const char* file, cookie** cookies, size_t* num_of_cookies) {
         }
 
         if (bisect_string(cookie_buf, &cookie_key, &cookie_val, '=') < 0) {
+            fatal("Wrong syntax of cookies in file. Correct syntax key=val");
             goto error_exit;
         }
 

@@ -143,7 +143,7 @@ int send_http_request(int sock, http_request http_req);
 // if server responded with other status than 200 then this function prints on standard output
 // status line of response
 //
-// returns 0 - on success, -1 - on failure
+// returns 0 - on success, -1 - on failure, 1 - when server got http response with status different than 200
 int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len);
 
 #endif //SK_MALE_ZADANIE1920_HTTP_REQUEST_H
