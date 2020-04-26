@@ -97,8 +97,6 @@ bool starts_with_prefix_case_insensitive(const char* prefix, const char* str) {
 ssize_t read_line(const char* source, char* dest, size_t max_line_len) {
     char* pos = strchr(source, '\n');
 
-    //printf("Source: %s  Found endl: %s\n", source, pos);
-
     // No line found
     if (pos == NULL) {
         errno = 1;

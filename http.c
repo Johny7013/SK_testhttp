@@ -402,9 +402,6 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
             // and header lines of http response
             while (read_by_lines - prev_read > 0 && !empty_line_encountered) {
 
-                //TODO remove
-                printf("Line: %s", line);
-
                 if (!status_line_encountered) {
                     status_is_ok = is_status_ok(line);
                     if (!status_is_ok) {
@@ -412,14 +409,6 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
                     }
 
                     status_line_encountered = true;
-                }
-
-                //TODO remove
-                if (starts_with_prefix("Content-Length:", line)) {
-                    char* con_len;
-                    char* val;
-                    bisect_string(line, &con_len, &val, ':');
-                    content_len_field = strtoull(val, NULL, 10);
                 }
 
                 if (status_is_ok) {
@@ -506,8 +495,6 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
 
                         still_to_read_in_chunk = chunk_len + 2; // +2 because of "\r\n"
 
-//                        printf("Still to read in chunk: %d\n", still_to_read_in_chunk);
-
                         if (chunk_len == 0) {
                             zero_chunk_encountered = true;
                         }
@@ -533,8 +520,6 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
                 }
             }
         }
-
-//        printf("read from socket: %zd bytes: %s\n", rcv_len, buffer);
     }
 
     if (!status_is_ok) {
@@ -544,12 +529,6 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
     if (encoding_is_chunked && !zero_chunk_encountered) {
         fatal("Unable to read all chunked data");
         return -1;
-    }
-
-    //TODO remove
-    if (!encoding_is_chunked && content_len_res != content_len_field) {
-        fatal("NOT CONFORMANT LEN FIELD");
-        exit(EXIT_FAILURE);
     }
 
     // set answer

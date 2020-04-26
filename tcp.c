@@ -59,7 +59,7 @@ int connect_with_server(char* address, char* port) {
 // returns 0 - on success, -1 - on failure
 int write_to_socket(int sock, char* msg) {
     size_t len = strlen(msg);
-//    printf("writing to socket: %s\n", http_req_str);
+
     if (write(sock, msg, len) != len) {
         syserr("partial / failed write");
         return -1;
@@ -77,7 +77,7 @@ int write_to_socket(int sock, char* msg) {
 ssize_t read_from_socket(int sock, char* buffer, size_t max_data_to_read) {
     ssize_t rcv_len = read(sock, buffer, max_data_to_read);
     if (rcv_len < 0) {
-        syserr("Failed trying to read for socket");
+        syserr("Failed trying to read from socket");
         return -1;
     }
 

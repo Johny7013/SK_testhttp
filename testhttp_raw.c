@@ -16,8 +16,6 @@
 
 #define BUFFER_SIZE MAX_HEADER_FIELD_LEN + 1
 
-//#define BUFFER_SIZE 100 + 1
-
 int main(int argc, char* argv[]) {
 
     if (argc != 4) {
@@ -49,21 +47,6 @@ int main(int argc, char* argv[]) {
         fatal("Failed trying to parse tested_http_address from input");
         goto clean_before_tested_http_address;
     }
-
-    // test parsing
-
-    printf("Address: %s, Port: %s \n", address, port);
-
-    printf("\n");
-    printf("Cookies: \n");
-
-    for (size_t i = 0; i < num_of_cookies; i++) {
-        print_cookie(cookies[i]);
-        printf("\n");
-    }
-
-    printf("\n");
-    printf("Tested_http_address Host: %s; Resource: %s; Protocol_type: %d\n", host, resource, protocol_type);
 
     // prepare http request
 
