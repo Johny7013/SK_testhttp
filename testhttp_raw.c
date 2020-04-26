@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     // parse input
 
     if (parse_address_port(argv[1], &address, &port) < 0) {
-        fatal("Failed trying to parse address:port form input");
+        fatal("Failed trying to parse address:port from input");
         goto error_exit;
     }
 
