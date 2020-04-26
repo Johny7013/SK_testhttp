@@ -427,6 +427,7 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
                     if (line_sets_cookie(line)) {
                         cookie retrieved_cookie = retrieve_cookie_from_set_cookie(line);
                         print_cookie(retrieved_cookie);
+                        printf("\n");
                         free_cookie(retrieved_cookie);
                     }
 
