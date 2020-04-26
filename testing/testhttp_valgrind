@@ -15,11 +15,12 @@ HTTPS_PREF="https://"
 SCRIPT_LOCATION=$(dirname $0)
 
 # check input
-
-if [[ ! -f $1 ]]; then
-	echo "$1 is not a file"
-	exit 1
-fi
+# uncomment if you want to check it befere running testhttp_raw
+# testhttp_raw checks it too
+#if [[ ! -f $1 ]]; then
+#	echo "ERROR: $1 is not a file"
+#	exit 1
+#fi
 
 # variable to store conf file name
 TEMP=""

@@ -37,16 +37,21 @@ int parse_address_port(const char* input_addr_port, char** address, char** port)
 
     if (errno != 0 || *port == end_ptr || port_num > MAX_PORT_NUM) {
         fatal("Wrong port number");
-        return -1;
+        goto err_exit_clean_addr_port;
     }
 
     // if strtoul hasn't read whole port_str
     if (*end_ptr != '\0') {
         fatal("Wrong value in input argument connect address. Correct syntax: address:port");
-        return -1;
+        goto err_exit_clean_addr_port;
     }
 
     return 0;
+
+err_exit_clean_addr_port:
+    free(*address);
+    free(*port);
+    return -1;
 }
 
 

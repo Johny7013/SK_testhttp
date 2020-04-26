@@ -68,7 +68,7 @@ echo;
 
 echo -e "Test: $TEST_NUMBER wrong protocol\n"
 echo -e "Arguments: " "cookies.txt htt://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx \n"
-./testhttp_valgrind cookies.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx
+./testhttp_valgrind cookies.txt htt://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx
 
 ((TEST_NUMBER++))
 
