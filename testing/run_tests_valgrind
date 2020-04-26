@@ -8,7 +8,7 @@ echo -e "Arguments: " "cookies.txt http://www.mimuw.edu.pl/ \n"
 
 ((TEST_NUMBER++))
 
-echo -e "\n\n\n";
+echo;
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://sportowefakty.wp.pl/ \n"
@@ -16,7 +16,7 @@ echo -e "Arguments: " "cookies.txt https://sportowefakty.wp.pl/ \n"
 
 ((TEST_NUMBER++))
 
-echo -e "\n\n\n";
+echo;
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://sportowefakty.wp.pl/ \n"
@@ -24,7 +24,7 @@ echo -e "Arguments: " "cookies.txt https://sportowefakty.wp.pl/ \n"
 
 ((TEST_NUMBER++))
 
-echo -e "\n\n\n";
+echo;
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://wallpapershome.com/images/pages/pic_h/21486.jpg \n"
@@ -32,7 +32,7 @@ echo -e "Arguments: " "cookies.txt https://wallpapershome.com/images/pages/pic_h
 
 ((TEST_NUMBER++))
 
-echo -e "\n\n\n";
+echo;
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt http://wallpapershome.com:80/images/pages/pic_h/21486.jpg \n"
@@ -40,7 +40,7 @@ echo -e "Arguments: " "cookies.txt http://wallpapershome.com:80/images/pages/pic
 
 ((TEST_NUMBER++))
 
-echo -e "\n\n\n";
+echo;
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://www.mimuw.edu.pl/ \n"
@@ -48,7 +48,7 @@ echo -e "Arguments: " "cookies.txt https://www.mimuw.edu.pl/ \n"
 
 ((TEST_NUMBER++))
 
-echo -e "\n\n\n";
+echo;
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt https://www.mimuw.edu.pl:443/ \n"
@@ -56,8 +56,33 @@ echo -e "Arguments: " "cookies.txt https://www.mimuw.edu.pl:443/ \n"
 
 ((TEST_NUMBER++))
 
-echo -e "\n\n\n";
+echo;
 
 echo -e "Test: $TEST_NUMBER\n"
 echo -e "Arguments: " "cookies.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx \n"
 ./testhttp_valgrind cookies.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx
+
+((TEST_NUMBER++))
+
+echo;
+
+echo -e "Test: $TEST_NUMBER wrong protocol\n"
+echo -e "Arguments: " "cookies.txt htt://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx \n"
+./testhttp_valgrind cookies.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx
+
+((TEST_NUMBER++))
+
+echo;
+
+echo -e "Test: $TEST_NUMBER no file\n"
+echo -e "Arguments: " "cookiewqqewes.txt htt://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx \n"
+./testhttp_valgrind cookiewqqewes.txt http://www.httpwatch.com/httpgallery/chunked/chunkedimage.aspx
+
+
+((TEST_NUMBER++))
+
+echo;
+
+echo -e "Test: $TEST_NUMBER  Wrong port num\n"
+echo -e "Arguments: " "./testhttp_raw 192.178.90.90:92837 cookies.txt http://zsziok.edu.pl/ \n"
+valgrind --leak-check=full ./testhttp_raw 192.178.90.90:92837 cookies.txt http://zsziok.edu.pl/
