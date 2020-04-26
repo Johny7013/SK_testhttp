@@ -92,6 +92,8 @@ cookie retrieve_cookie_from_set_cookie(char* set_cookie_line) {
     char* cookie_str = pass_whitespaces(set_cookie_line + strlen("Set-Cookie:"));
     char* end_of_cookie_str;
 
+    bool set_cookie_properly = false;
+
     const size_t possible_ends_size = 4;
     char possible_ends_of_cookie_str[] = ";,\r "; // according to RFC2109 (in this case if I want only first cookie)
 
@@ -119,10 +121,14 @@ cookie retrieve_cookie_from_set_cookie(char* set_cookie_line) {
             free(key);
             free(val);
 
+            set_cookie_properly = true;
             break;
         }
     }
 
+    if (!set_cookie_properly) {
+        fatal("Failed to parse cookie from Set-Cookie header. Wrong syntax.");
+    }
 
     return made_cookie;
 }
