@@ -6,8 +6,8 @@
 # $2 - http address from which we want to get resource
 
 # script to run testhttp_raw via stunnel
-# this script assumes that there is testhttp_raw executable file in the same folder
-# as the script (i.e. accessible in this way: ./testhttp_raw)
+# this script assumes that there is testhttp_raw executable file in the same directory
+# may be neccessary to run with sudo command (depends on system's setup)
 
 HTTP_PREF="http://"
 HTTPS_PREF="https://"
