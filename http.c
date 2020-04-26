@@ -357,7 +357,7 @@ int handle_http_response(int sock, size_t buffer_size, uint64_t* content_len_ans
     char line[buffer_size];
     size_t chars_left_in_line = 0, still_to_read_in_chunk = 0;
     ssize_t rcv_len = 1, read_by_lines, prev_read, read_in_line;
-    uint64_t content_len_field = 0, chunk_len = 0;
+    uint64_t chunk_len = 0;
     uint64_t content_len_res = 0; // local variable, at the end content_len_ans is set on value of this variable
     bool empty_line_encountered = false, status_line_encountered = false, status_is_ok = false;
     bool encoding_is_chunked = false, zero_chunk_encountered = false;

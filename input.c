@@ -33,7 +33,7 @@ int parse_address_port(const char* input_addr_port, char** address, char** port)
     char* end_ptr;
     errno = 0;
 
-    uint16_t port_num = (uint16_t)strtoul(*port, &end_ptr, 10);
+    unsigned long port_num = strtoul(*port, &end_ptr, 10);
 
     if (errno != 0 || *port == end_ptr || port_num > MAX_PORT_NUM) {
         fatal("Wrong port number");
@@ -41,7 +41,7 @@ int parse_address_port(const char* input_addr_port, char** address, char** port)
     }
 
     // if strtoul hasn't read whole port_str
-    if (*port + strlen(*port) != end_ptr) {
+    if (*end_ptr != '\0') {
         fatal("Wrong value in input argument connect address. Correct syntax: address:port");
         return -1;
     }
