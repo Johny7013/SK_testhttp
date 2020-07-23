@@ -1,36 +1,40 @@
 # SK_testhttp
-Programu testhttp_raw zawierający oprogramowanie klienta oraz skrypt testhttp. Zadaniem tych programów jest zapewnienie narzędzia do prostego testowania stron WWW. Używamy protokołu warstwy aplikacji HTTP w wersji 1.1, protokołu warstwy transportu TCP i warstwy sieci IPv4.
 
-Klient po zinterpretowaniu argumentów wiersza poleceń łączy się ze wskazanym adresem i portem, wysyła do serwera HTTP żądanie podania wskazanej strony, odbiera odpowiedź od serwera, analizuje wynik i podaje raport.
-Opis komunikacji
+Repo consists of program testhttp_raw containing client-side software and testhttp script. This two parts are providing tools to simple testing WWW websites. This tools in applications layer use HTTP protocol in 1.1 version, TCP in transportation layer and IPv4 in network layer.
 
-Techniczny opis formatu żądań i odpowiedzi HTTP znajduje się w dokumencie RFC7230. Klient łączy się ze wskazanym adresem i portem, a następnie wysła odpowiednie żądanie HTTP. Adres i port połączenia nie muszą się zgadzać z adresem i portem wskazanym w adresie testowanej strony.
+Client after interpreteting arguments passed by command line, connects with designated address and port, sends to server appropriate HTTP request, receives HTTP response from server, analyzes result and shows action raport.
 
-Jeśli odpowiedź serwera jest inna niż 200 OK (np. 202 Accepted) klient ma podaje raport w postaci zawartości wiersza statusu uzyskanej odpowiedzi. Jeśli odpowiedź serwera jest 200 OK, raport ma składa się z dwóch części: zestawienia ciasteczek oraz rzeczywistej długości przesyłanego zasobu. Techniczny opis formatu pola nagłówkowego Set-Cookie znajduje się w dokumencie RFC2109. Należy tutaj pamiętać, że jedna odpowiedź HTTP może zawierać wiele pól Set-Cookie. Należy przyjąć, że jedno pole nagłówkowe Set-Cookie ustawia jedno ciasteczko. Jeśli w jednym polu ustawiane jest wiele ciasteczek należy ciasteczka poza pierwszym pominąć. Jeśli implementacja przyjmuje ograniczenia na liczbę przyjmowanych ciasteczek i ich długość, to ograniczenia te powinny zostać dobrane zgodnie z założeniami przyjętymi w standardach HTTP dla rozwiązań ogólnego przeznaczenia. Dodatkowo przy liczeniu długości przesyłanego zasobu należy uwzględnić możliwość, że zasób był wysłany w częściach (kodowanie przesyłowe chunked).
+## Comunication descrption
 
-Opis wypisywanego raportu
+Technical description of HTTP request and response format can be found in document RFC7230. Client connects with desired address and port, then sends appropriate HTTP request. Connection address and port passed in command line don't have to match address and port of tested WWW website. 
 
-Raport składa się z dwóch następujących bezpośrednio jedna po drugiej części: zestawienia ciasteczek oraz rzeczywistej długości przesyłanego zasobu. Zestawienie ciasteczek składa się z liczby linii równej liczbie ciasteczek. Każde ciasteczko wypisywane jest w osobnym wierszu w formacie klucz=wartość. Rzeczywista długość przesyłanego zasobu składa się z jednego wiersza postaci Dlugosc zasobu: , gdzie to zapisana w systemie dziesiętnym długość zasobu.
+If server response differ from 200 OK (e.g. 202 Accepted), client prints raport consisting of HTTP response status line. Otherwise, raport consists of two parts: website cookies and real length of sent recource. Technical description of format of Set-Cookie header can be found in document RFC2109. All restrictions according to HTTP protocola in this implementation are consistent with generl use solutions. Length of recource is counted properly also when resource is sent in chunked encoding. 
 
-Opis wiersza poleceń
+## Raport description
 
-Wywołanie programu klienta ma ogólną postać:
+Raport consists of two consecutive parts: website cookies and real length of sent resource. Website cookies are presented in as many lines as there were cookies. Each cookie is printed in individual line in key=value format. Real length of sent resource is presented in one, individual line after string "Dlugosc zasobu:". Length of sent resource is printed in bytes in dcimal format.
 
-testhttp_raw <adres połączenia>:<port> <plik ciasteczek> <testowany adres http>
+## Command line description
 
-gdzie
+General lauching of program looks as follows:
 
-    <adres połączenia> to adres, z którym klient ma się połączyć;
-    <port> to numer portu, z którym klient ma się podłączyć;
-    <plik ciasteczek> to plik zawierający ciasteczka wysyłane do serwera HTTP, format opisany poniżej;
-    <testowany adres http> to adres strony, która ma być zaserwowana przez serwer HTTP.
 
-W pliku zawierającym ciasteczka każde ciasteczko jest zawarte w osobnym wierszu w formacie klucz=wartość (bez spacji naokoło znaku =).
+    testhttp_raw <connection address>:<port> <cookies file> <tested http address>
 
-Przykładowe wywołania:
+    
+where
 
-  ./testhttp_raw www.mimuw.edu.pl:80 ciasteczka.txt http://www.mimuw.edu.pl/;
+    <connection address> - address with which client is going to connect;
+    <port> - port number with which client is going to connect;
+    <cookies file> - file consisting cookies designated to sent to HTTP server, description of cookies file format below;
+    <tested http address> - address of WWW website, which is going to be served by HTTP server.
+
+In cookies file every cookie is in individual line in key=value format (without whitespaces around '=' sign)
+
+Exemplary runs:
+
+  ./testhttp_raw www.mimuw.edu.pl:80 cookies.txt http://www.mimuw.edu.pl/;
 
   ./testhttp_raw 127.0.0.1:30303 ciasteczka.txt https://www.mimuw.edu.pl/;
 
-  ./testhttp <plik ciasteczek> <testowany adres http>.
+  ./testhttp <cookies file> <tested http address>.
